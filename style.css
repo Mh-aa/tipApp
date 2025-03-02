@@ -8,14 +8,14 @@
 	font-family: 'Quicksand';
 	font-style: normal;
 	font-weight: 400;
-	src: url(/fonts/Quicksand-Regular.ttf) format('truetype');
+	src: url(../tipApp/fonts/Quicksand-Regular.ttf) format('truetype');
 }
 
 @font-face {
 	font-family: 'Noto Color Emoji';
 	font-style: normal;
 	font-weight: 400;
-	src: url(/fonts/NotoColorEmoji-Regular.ttf) format('truetype');
+	src: url(../tipApp/fonts/NotoColorEmoji-Regular.ttf) format('truetype');
 }
 
 body {
