@@ -1,0 +1,126 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+@font-face {
+	font-family: 'Quicksand';
+	font-style: normal;
+	font-weight: 400;
+	src: url(/fonts/Quicksand-Regular.ttf) format('truetype');
+}
+
+@font-face {
+	font-family: 'Noto Color Emoji';
+	font-style: normal;
+	font-weight: 400;
+	src: url(/fonts/NotoColorEmoji-Regular.ttf) format('truetype');
+}
+
+body {
+	margin: 0;
+	background-color: #006a4e;
+	background-image: linear-gradient(to bottom right, #006a4e, #12362c);
+	background-attachment: fixed;
+	font-family: 'Quicksand', serif, 'Noto Color Emoji', 'Trebuchet MS',
+		Helvetica, sans-serif;
+	font-optical-sizing: auto;
+	font-weight: 400;
+	font-style: normal;
+}
+
+.header {
+	background-color: rgba(255, 255, 255, 0.1);
+	width: 100%;
+	text-align: center;
+	padding: 2rem;
+	margin-bottom: 2rem;
+	box-shadow: rgba(0, 0, 0, 0.3) 0 4px 12px;
+}
+
+footer p {
+	font-size: 1rem;
+	opacity: 0.5;
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+}
+
+.wrapper {
+	max-width: 500px;
+	margin: auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+input {
+	-webkit-appearance: none !important;
+	-moz-appearance: none !important;
+	appearance: none !important;
+	outline: none;
+	background-color: whitesmoke;
+	max-width: 50%;
+	padding: 1rem;
+	border: 2px solid grey;
+	border-radius: 5%;
+	border-width: 2px;
+	display: block;
+	margin: 1rem;
+}
+
+button {
+	margin: 2rem 0 2rem;
+	background-color: rgba(255, 255, 255, 0.3);
+	border: none;
+	color: #012917;
+	padding: 1rem 2rem;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 5%;
+	display: inline-block;
+	font-size: 1rem;
+	font-weight: 500;
+	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent !important;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	outline: none;
+}
+
+button:hover {
+	border: 1px solid white;
+	box-shadow: rgba(0, 0, 0, 0.3) 0 4px 12px;
+	color: whitesmoke;
+}
+
+.hidden {
+	visibility: hidden;
+}
+
+p {
+	font-size: 1.3rem;
+	line-height: 2;
+	margin: 0.5rem;
+	padding: 0 1rem 0 1rem;
+	color: whitesmoke;
+	text-align: center;
+}
+
+h1 {
+	color: #012917;
+	font-size: 2rem;
+}
+
+/* .font-styling {
+	font-family: 'Quicksand', serif, 'Trebuchet MS', Helvetica, sans-serif;
+	font-optical-sizing: auto;
+	font-weight: 400;
+	font-style: normal;
+} */
