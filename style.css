@@ -23,7 +23,7 @@ body {
 	background-color: #006a4e;
 	background-image: linear-gradient(to bottom right, #006a4e, #12362c);
 	background-attachment: fixed;
-	font-family: 'Quicksand', serif, 'Noto Color Emoji', 'Trebuchet MS',
+	font-family: 'Quicksand', 'Noto Color Emoji', 'Trebuchet MS',
 		Helvetica, sans-serif;
 	font-optical-sizing: auto;
 	font-weight: 400;
