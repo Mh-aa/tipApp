@@ -24,7 +24,6 @@ html {
 }
 
 body {
-    margin: 0;
     background-color: #ffffff;
     font-family: 'Quicksand', 'Trebuchet MS', Helvetica, sans-serif;
     font-optical-sizing: auto;
@@ -40,27 +39,26 @@ header {
     background-color: #8db600;
     width: 100%;
     text-align: center;
-    padding: 5%;
-    margin-bottom: 5%;
+    padding: 1rem;
+    margin-bottom: 2rem;
     box-shadow: rgba(0, 0, 0, 0.2) 0 4px 12px;
     border-bottom: 1px solid #6f9101;
     color: #1d1d1d;
 
     @media (width > 480px) {
-        padding: 3%;
+        padding: 2rem;
+        margin-bottom: 3rem;
     }
 }
 
 p {
     font-size: 1.1rem;
     line-height: 1.5;
-    margin-top: 5%;
-    padding: 0 1rem 0 1rem;
+    margin-top: 1.2rem;
     text-align: center;
 
     @media (width > 480px) {
         font-size: 1.3rem;
-        line-height: 1.7;
     }
 }
 
@@ -89,7 +87,11 @@ footer {
     bottom: 0;
     width: 100%;
     text-align: center;
-    margin-bottom: 2%;
+    margin-bottom: 0.5rem;
+
+    @media (width > 480px) {
+        margin-bottom: 1rem;
+    }
 }
 
 footer p {
@@ -104,11 +106,15 @@ input {
     outline: none;
     background-color: whitesmoke;
     max-width: 50%;
-    padding: 4%;
+    padding: 1.1em;
     border-radius: 5px;
     border: 1px solid lightgray;
     display: block;
-    margin: 4%;
+    margin-bottom: 1.75rem;
+
+    @media (width > 480px) {
+        margin-bottom: 2.5rem;
+    }
 }
 
 input:focus::placeholder {
@@ -116,16 +122,20 @@ input:focus::placeholder {
 }
 
 input::placeholder {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-family: 'Quicksand', 'Trebuchet MS', Helvetica, sans-serif;
     color: #3c3c3c;
+
+    @media (width > 480px) {
+        font-size: 0.8rem;
+    }
 }
 
 button {
-    margin: 6% 0;
+    margin: 0;
     background-color: #8db600;
     border: none;
-    padding: 4% 8%;
+    padding: 1em 2em;
     font-family: 'Quicksand', 'Trebuchet MS', Helvetica, sans-serif;
     text-align: center;
     text-decoration: none;
@@ -139,6 +149,11 @@ button {
     -webkit-tap-highlight-color: transparent !important;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     outline: none;
+
+    @media (width > 480px) {
+        margin: 1rem 0;
+        font-size: 1.1rem;
+    }
 }
 
 button:hover {
@@ -150,3 +165,5 @@ button:hover {
 .hidden {
     visibility: hidden;
 }
+
+
