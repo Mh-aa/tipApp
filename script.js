@@ -5,6 +5,8 @@ const inputBill = document.getElementById('bill');
 const inputTip = document.getElementById('tip');
 const footer = document.getElementById('footer');
 
+let bill, tip, billValid, tipValid;
+
 const styleBorder = function (element, style) {
     document.getElementById(element).style.border = style;
 };
@@ -20,6 +22,22 @@ const resetInput = function (element) {
 const removeHidden = function () {
     message.classList.remove('hidden');
 };
+
+// Remove red border error styling as soon as user puts in correctly formatted input
+inputBill.addEventListener('keyup', function (e) {
+    if (/^\d+([.,]\d{1,2})?$/.test(e.target.value)) {
+        styleBorder('bill', 'none');
+        billValid = true;
+    }
+});
+
+inputTip.addEventListener('keyup', function (e) {
+    if (/^\d+([.,]\d{1,2})?$/.test(e.target.value)) {
+        styleBorder('tip', 'none');
+        billValid = true;
+    }
+});
+
 
 document.getElementById('calc-button').addEventListener('click', function () {
     let bill = document.getElementById('bill').value;
