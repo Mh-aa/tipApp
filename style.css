@@ -1,169 +1,171 @@
 html {
-    position: relative;
-    min-height: 100%;
+	position: relative;
+	min-height: 100%;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 @font-face {
-    font-family: 'Quicksand';
-    font-style: normal;
-    font-weight: 400;
-    src: url(../tipApp/fonts/Quicksand-Regular.ttf) format('truetype');
+	font-family: 'Quicksand';
+	font-style: normal;
+	font-weight: 400;
+	src: url(../tipApp/fonts/Quicksand-Regular.ttf) format('truetype');
+	/* For local testing */
+	/* src: url(/fonts/Quicksand-Regular.ttf) format('truetype'); */
 }
 
 @font-face {
-    font-family: 'Rubik-Bold';
-    font-style: normal;
-    font-weight: 700;
-    src: url(../tipApp/fonts/Rubik-Bold.ttf) format('truetype');
+	font-family: 'Tiny5-Regular';
+	font-style: normal;
+	font-weight: 700;
+	src: url(../tipApp/fonts/Tiny5-Regular.ttf) format('truetype');
+	/* For local testing */
+	/* src: url(/fonts/Tiny5-Regular.ttf) format('truetype'); */
 }
 
 body {
-    background-color: #ffffff;
-    font-family: 'Quicksand', 'Trebuchet MS', Helvetica, sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-    color: #3c3c3c;
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow-y: hidden !important;
+	background-color: #ffffff;
+	font-family: 'Quicksand', 'Trebuchet MS', Helvetica, sans-serif;
+	font-optical-sizing: auto;
+	font-weight: 400;
+	font-style: normal;
+	color: #3c3c3c;
+	min-height: 100vh;
+	min-height: 100dvh;
+	overflow-y: hidden !important;
 }
 
 header {
-    background-color: #8db600;
-    width: 100%;
-    text-align: center;
-    padding: 1rem;
-    margin-bottom: 2rem;
-    box-shadow: rgba(0, 0, 0, 0.2) 0 4px 12px;
-    border-bottom: 1px solid #6f9101;
-    color: #1d1d1d;
+	background-color: #8db600;
+	width: 100%;
+	text-align: center;
+	padding: 1rem;
+	margin-bottom: 2rem;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 4px 12px;
+	border-bottom: 1px solid #6f9101;
+	color: #1d1d1d;
 
-    @media (width > 480px) {
-        padding: 2rem;
-        margin-bottom: 3rem;
-    }
+	@media (width > 480px) {
+		padding: 2rem;
+		margin-bottom: 3rem;
+	}
 }
 
 p {
-    font-size: 1.1rem;
-    line-height: 1.5;
-    margin-top: 1.2rem;
-    text-align: center;
+	font-size: 1.1rem;
+	line-height: 1.5;
+	margin-top: 1.2rem;
+	text-align: center;
 
-    @media (width > 480px) {
-        font-size: 1.3rem;
-    }
+	@media (width > 480px) {
+		font-size: 1.3rem;
+	}
 }
 
 .wrapper {
-    max-width: 500px;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+	max-width: 500px;
+	margin: auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 h1 {
-    font-family: 'Rubik-Bold', 'Lucida Sans', 'Lucida Sans Regular',
-        'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    font-size: 1.8rem;
+	font-family: 'Tiny5-Regular', 'Lucida Sans', 'Lucida Sans Regular',
+		'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	font-size: 2rem;
 
-    @media (width > 480px) {
-        font-size: 2.5rem;
-    }
+	@media (width > 480px) {
+		font-size: 3rem;
+	}
 }
 
 footer {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    margin-bottom: 0.5rem;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+	margin-bottom: 0.5rem;
 
-    @media (width > 480px) {
-        margin-bottom: 1rem;
-    }
+	@media (width > 480px) {
+		margin-bottom: 1rem;
+	}
 }
 
 footer p {
-    font-size: 1rem;
-    opacity: 0.5;
+	font-size: 1rem;
+	opacity: 0.5;
 }
 
 input {
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
-    outline: none;
-    background-color: whitesmoke;
-    max-width: 50%;
-    padding: 1.1em;
-    border-radius: 5px;
-    border: 1px solid lightgray;
-    display: block;
-    margin-bottom: 1.75rem;
+	-webkit-appearance: none !important;
+	-moz-appearance: none !important;
+	appearance: none !important;
+	outline: none;
+	background-color: whitesmoke;
+	max-width: 50%;
+	padding: 1.1em;
+	border-radius: 5px;
+	border: 1px solid lightgray;
+	display: block;
+	margin-bottom: 1.75rem;
 
-    @media (width > 480px) {
-        margin-bottom: 2.5rem;
-    }
+	@media (width > 480px) {
+		margin-bottom: 2.5rem;
+	}
 }
 
 input:focus::placeholder {
-    color: transparent;
+	color: transparent;
 }
 
 input::placeholder {
-    font-size: 0.75rem;
-    font-family: 'Quicksand', 'Trebuchet MS', Helvetica, sans-serif;
-    color: #3c3c3c;
+	font-size: 0.75rem;
+	font-family: 'Quicksand', 'Trebuchet MS', Helvetica, sans-serif;
+	color: #3c3c3c;
 
-    @media (width > 480px) {
-        font-size: 0.8rem;
-    }
+	@media (width > 480px) {
+		font-size: 0.8rem;
+	}
 }
 
 button {
-    margin: 0;
-    background-color: #8db600;
-    border: none;
-    padding: 1em 2em;
-    font-family: 'Quicksand', 'Trebuchet MS', Helvetica, sans-serif;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 5px;
-    display: inline-block;
-    font-size: 1rem;
-    cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent !important;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    outline: none;
+	margin: 0;
+	background-color: #8db600;
+	border: none;
+	padding: 1em 2em;
+	font-family: 'Quicksand', 'Trebuchet MS', Helvetica, sans-serif;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 5px;
+	display: inline-block;
+	font-size: 1rem;
+	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent !important;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	outline: none;
 
-    @media (width > 480px) {
-        margin: 1rem 0;
-        font-size: 1.1rem;
-    }
+	@media (width > 480px) {
+		margin: 1rem 0;
+		font-size: 1.1rem;
+	}
 }
 
 button:hover {
-    border: 1px solid white;
-    box-shadow: rgba(0, 0, 0, 0.3) 0 4px 12px;
-    color: whitesmoke;
+	border: 1px solid white;
+	box-shadow: rgba(0, 0, 0, 0.3) 0 4px 12px;
+	color: whitesmoke;
 }
 
 .hidden {
-    visibility: hidden;
+	visibility: hidden;
 }
-
-
