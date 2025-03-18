@@ -15,7 +15,7 @@ html {
 	font-weight: 400;
 	src: url(../tipApp/fonts/Quicksand-Regular.ttf) format('truetype');
 	/* For local testing */
-	/* src: url(/fonts/Quicksand-Regular.ttf) format('truetype'); */
+	src: url(/fonts/Quicksand-Regular.ttf) format('truetype');
 }
 
 @font-face {
@@ -24,7 +24,7 @@ html {
 	font-weight: 700;
 	src: url(../tipApp/fonts/Tiny5-Regular.ttf) format('truetype');
 	/* For local testing */
-	/* src: url(/fonts/Tiny5-Regular.ttf) format('truetype'); */
+	src: url(/fonts/Tiny5-Regular.ttf) format('truetype');
 }
 
 body {
@@ -62,7 +62,7 @@ p {
 	text-align: center;
 
 	@media (width > 480px) {
-		font-size: 1.3rem;
+		/* font-size: 1.3rem; */
 	}
 }
 
@@ -103,21 +103,24 @@ footer p {
 	opacity: 0.5;
 }
 
+/* Adapted margins on the input fields as well, this is a WIP! */
+
 input {
 	-webkit-appearance: none !important;
 	-moz-appearance: none !important;
 	appearance: none !important;
 	outline: none;
 	background-color: whitesmoke;
-	max-width: 50%;
+	width: 80%;
+	max-width: 250px;
 	padding: 1.1em;
 	border-radius: 5px;
 	border: 1px solid lightgray;
 	display: block;
-	margin-bottom: 1.75rem;
+	/* margin-bottom: 1.75rem; */
 
 	@media (width > 480px) {
-		margin-bottom: 2.5rem;
+		/* margin-bottom: 0.5rem; */
 	}
 }
 
@@ -135,17 +138,15 @@ input::placeholder {
 	}
 }
 
-button {
-	margin: 0;
+/* Adapted button classes to fit the three new buttons */
+
+.btn {
 	background-color: #8db600;
 	border: none;
-	padding: 1em 2em;
 	font-family: 'Quicksand', 'Trebuchet MS', Helvetica, sans-serif;
 	text-align: center;
 	text-decoration: none;
 	border-radius: 5px;
-	display: inline-block;
-	font-size: 1rem;
 	cursor: pointer;
 	user-select: none;
 	-webkit-user-select: none;
@@ -153,18 +154,36 @@ button {
 	-webkit-tap-highlight-color: transparent !important;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	outline: none;
+}
+
+.btn__calc {
+	margin: 1rem 0;
+	padding: 1em 2em;
+	display: inline-block;
+	font-size: 1rem;
 
 	@media (width > 480px) {
-		margin: 1rem 0;
 		font-size: 1.1rem;
 	}
 }
 
-button:hover {
+.btn__small {
+	margin: 1.5rem 0.75rem;
+	padding: 0.5em 1.25em;
+	font-size: 1rem;
+
+	@media (width > 480px) {
+		font-size: 1rem;
+	}
+}
+
+.btn:hover {
 	border: 1px solid white;
 	box-shadow: rgba(0, 0, 0, 0.3) 0 4px 12px;
 	color: whitesmoke;
 }
+
+/* Adaptations over */
 
 .hidden {
 	visibility: hidden;
