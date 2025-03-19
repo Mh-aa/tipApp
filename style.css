@@ -48,11 +48,6 @@ header {
 	box-shadow: rgba(0, 0, 0, 0.2) 0 4px 12px;
 	border-bottom: 1px solid #6f9101;
 	color: #1d1d1d;
-
-	@media (width > 480px) {
-		padding: 2rem;
-		margin-bottom: 3rem;
-	}
 }
 
 p {
@@ -138,6 +133,13 @@ input::placeholder {
 	}
 }
 
+label {
+	font-size: 0.8rem;
+	margin: 0.5rem;
+	text-align: left;
+	width: 50%;
+}
+
 /* Adapted button classes to fit the three new buttons */
 
 .btn {
@@ -157,8 +159,8 @@ input::placeholder {
 }
 
 .btn__calc {
-	margin: 1rem 0;
-	padding: 1em 2em;
+	margin: 1rem 1.2rem;
+	padding: 0.75em 1em;
 	display: inline-block;
 	font-size: 1rem;
 
@@ -168,13 +170,17 @@ input::placeholder {
 }
 
 .btn__small {
-	margin: 1.5rem 0.75rem;
+	margin: 1rem 0.75rem 0;
 	padding: 0.5em 1.25em;
 	font-size: 1rem;
 
 	@media (width > 480px) {
 		font-size: 1rem;
 	}
+}
+
+.cancel {
+	background-color: lightgrey;
 }
 
 .btn:hover {
@@ -186,5 +192,5 @@ input::placeholder {
 /* Adaptations over */
 
 .hidden {
-	visibility: hidden;
+	display: none;
 }
