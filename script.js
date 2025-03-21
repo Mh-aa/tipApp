@@ -1,12 +1,11 @@
 'use strict';
 //TODO:
-// -Fix the logic in the calc button so that it calculates the bill together with the custom tip
-//Implement the fixed comma sign
+// Implement the fixed comma sign
+// implement translation logic
 const message = document.getElementById('message');
 const inputBill = document.getElementById('bill');
 const inputTip = document.getElementById('tip');
-// const footer = document.getElementById('footer');
-//ATTENTION: ADDED THESE
+
 const btn5Percent = document.getElementById('5');
 const btn7Percent = document.getElementById('7');
 const btn10Percent = document.getElementById('10');
@@ -15,7 +14,7 @@ const calcBtn = document.getElementById('calc-button');
 const cancelBtn = document.getElementById('cancel-button');
 const resetBtn = document.getElementById('reset');
 const labelCustom = document.getElementById('label__custom');
-////////////////////////////////////////////////////////
+
 let billValid, tipValid;
 
 const styleBorder = function (element, style) {
@@ -34,149 +33,12 @@ const removeHidden = function () {
 	message.classList.remove('hidden');
 };
 
-//ATTENTION: Moved the tippCalc function out of the calculate button and into a separate function. Had to remove the tip logic here because that one is additional and I still need to figure it out
-const calcTipp = function (tipVal) {
-	let bill = document.getElementById('bill').value;
+const sanitizeInput = function (bill, tip) {
+	billValid = true;
+	tipValid = true;
 
-	// Input sanitization
-	let billValid = true;
-
-	if (bill === '') return;
-
-	if (!/^\d+([.,]\d{1,2})?$/.test(bill)) {
-		styleBorder('bill', '2px solid red');
-		billValid = false;
-	}
-	if (!billValid) {
-		removeHidden();
-
-		setMessage(`Invalid input. Make sure your input is formatted correctly:<br>
-        <b>Bill input:</b> e.g. '10.00' or '10'`);
-
-		return;
-	}
-
-	// Replace commas with points, so that tipCalc can compute the value
-	bill = bill.replace(',', '.');
-
-	// Turn the strings into numbers
-	bill = Number(bill);
-
-	// Calculate tip
-	const tipCalc = bill * (tipVal / 100);
-	const total = tipCalc + bill;
-
-	// Make the <p> element visible
-	removeHidden();
-
-	// Remove red border from input field in case they are still visible from previous error handling
-	styleBorder('bill', '1px solid lightgray');
-
-	// Add the result of the calculations as text
-	setMessage(
-		`You want to give a tip of ${tipVal}%.
-        <br> YOUR BILL: ${bill.toFixed(2)} 
-        <br>💝 YOUR TIP: ${tipCalc.toFixed(2)}
-        <br>💸 YOUR TOTAL: ${total.toFixed(2)}`
-	);
-};
-
-//ATTENTION:Added the three default tip value buttons!
-for (let btn of [btn5Percent, btn7Percent, btn10Percent]) {
-	btn.addEventListener('click', function (e) {
-		calcTipp(Number(e.target.id));
-	});
-}
-//////////////////////////////////////////////
-
-//ATTENTION: Added these three: custom button, cancel button, reset button!
-customBtn.addEventListener('click', function () {
-	for (let element of [labelCustom, inputTip, calcBtn, cancelBtn]) {
-		element.classList.remove('hidden');
-	}
-
-	for (let element of [
-		customBtn,
-		btn5Percent,
-		btn7Percent,
-		btn10Percent,
-		resetBtn,
-	]) {
-		element.classList.add('hidden');
-	}
-});
-
-cancelBtn.addEventListener('click', function () {
-	for (let element of [labelCustom, inputTip, calcBtn, cancelBtn]) {
-		element.classList.add('hidden');
-	}
-
-	for (let element of [
-		customBtn,
-		btn5Percent,
-		btn7Percent,
-		btn10Percent,
-		resetBtn,
-	]) {
-		element.classList.remove('hidden');
-	}
-	resetInput('tip');
-});
-
-resetBtn.addEventListener('click', function () {
-	resetInput('bill');
-	resetInput('tip');
-	message.classList.add('hidden');
-});
-/////////////////////////////////////////////////////////
-
-// Remove red border error styling as soon as user puts in correctly formatted input
-inputBill.addEventListener('keyup', function (e) {
-	if (/^\d+([.,]\d{1,2})?$/.test(e.target.value)) {
-		styleBorder('bill', 'none');
-		billValid = true;
-	}
-});
-
-inputTip.addEventListener('keyup', function (e) {
-	if (/^\d+([.,]\d{1,2})?$/.test(e.target.value)) {
-		styleBorder('tip', 'none');
-		billValid = true;
-	}
-});
-
-calcBtn.addEventListener('click', function () {
-	// let bill = document.getElementById('bill').value;
-	// let tip = document.getElementById('tip').value;
-
-	// // Input sanitization
-	// let billValid = true;
-	// let tipValid = true;
-	// if (bill === '' || tip === '') {
-	// 	return;
-	// }
-	// if (!/^\d+([.,]\d{1,2})?$/.test(bill)) {
-	// 	styleBorder('bill', '2px solid red');
-	// 	billValid = false;
-	// }
-	// if (!/^\d+$/.test(tip)) {
-	// 	styleBorder('tip', '2px solid red');
-	// 	tipValid = false;
-	// }
-	// if (!billValid || !tipValid) {
-	// 	removeHidden();
-	// 	setMessage(`Invalid input. Make sure your input is formatted correctly:<br>
-	//     <b>Bill input:</b> e.g. '10.00' or '10'<br>
-	//     <b>Tip input:</b> e.g. '10'`);
-	// 	return;
-	// }
-	let bill = document.getElementById('bill').value;
-	let tip = document.getElementById('tip').value;
-
-	// Input sanitization
-	let tipValid = true;
-	if (tip === '') {
-		return;
+	if (bill === '' || tip === '') {
+		return false;
 	}
 	if (!/^\d+([.,]\d{1,2})?$/.test(bill)) {
 		styleBorder('bill', '2px solid red');
@@ -186,38 +48,120 @@ calcBtn.addEventListener('click', function () {
 		styleBorder('tip', '2px solid red');
 		tipValid = false;
 	}
+
 	if (!billValid || !tipValid) {
 		removeHidden();
 		setMessage(`Invalid input. Make sure your input is formatted correctly:<br>
-		<b>Bill input:</b> e.g. '10.00' or '10'<br>
-	    <b>Tip input:</b> e.g. '10'`);
-		return;
+			<b>Bill input:</b> e.g. '10.00' or '10'<br>
+			<b>Tip input:</b> e.g. '10'`);
+		return false;
+	}
+	return true;
+};
+
+const instantSanitizeInput = function (inputField, inputEvent) {
+	if (/^\d+([.,]\d{1,2})?$/.test(inputEvent)) {
+		styleBorder(inputField, 'none');
+		message.classList.add('hidden');
+	}
+	if (/^\d+([.,]\d{1,2})?$/.test(inputEvent)) {
+		styleBorder(inputField, 'none');
+		message.classList.add('hidden');
+	}
+};
+
+const toggleVisibility = function () {
+	for (let element of [labelCustom, inputTip, calcBtn, cancelBtn]) {
+		element.classList.toggle('hidden');
 	}
 
-	// // Replace commas with points, so that tipCalc can compute the value
-	// bill = bill.replace(',', '.');
-	// // Turn the strings into numbers
-	// bill = Number(bill);
-	// tip = Number(tip);
-	// // Calculate tip
-	// const tipCalc = bill * (tip / 100);
-	// const total = tipCalc + bill;
-	// // Make the <p> element visible
-	// removeHidden();
+	for (let element of [
+		customBtn,
+		btn5Percent,
+		btn7Percent,
+		btn10Percent,
+		resetBtn,
+	]) {
+		element.classList.toggle('hidden');
+	}
+};
 
-	calcTipp(tip);
+const calcTipp = function (tip) {
+	let bill = document.getElementById('bill').value;
 
-	// Remove red border from input field in case they are still visible from previous error handling
+	if (!sanitizeInput(bill, tip)) return;
+
+	bill = bill.replace(',', '.');
+	bill = Number(bill);
+	tip = Number(tip);
+
+	const tipCalc = bill * (tip / 100);
+	const total = tipCalc + bill;
+
+	// Make the <p> element visible
+	removeHidden();
+
+	// Remove red border from input field in case they are still visible from previous error handling:
 	styleBorder('bill', '1px solid lightgray');
-	styleBorder('tip', '1px solid lightgray');
-	// Add the result of the calculations as text
+
 	setMessage(
 		`You want to give a tip of ${tip}%.
-	    <br> YOUR BILL: ${bill.toFixed(2)}
-	    <br>💝 YOUR TIP: ${tipCalc.toFixed(2)}
+        <br> YOUR BILL: ${bill.toFixed(2)} 
+        <br>💝 YOUR TIP: ${tipCalc.toFixed(2)}
+        <br>💸 YOUR TOTAL: ${total.toFixed(2)}`
+	);
+	return [bill, tip, total];
+};
+
+for (let btn of [btn5Percent, btn7Percent, btn10Percent]) {
+	btn.addEventListener('click', function (e) {
+		calcTipp(Number(e.target.id));
+	});
+}
+
+// CustomBTN functionalty:
+// Shows: custom tip input field, calculate button, cancel button
+// Hides: three default buttons, custom button, reset button
+customBtn.addEventListener('click', function () {
+	toggleVisibility();
+});
+
+// CancelBtn functionalty:
+// Shows: three default buttons, custom button, reset button
+// Hides: custom tip input field, calculate button, cancel button
+cancelBtn.addEventListener('click', function () {
+	toggleVisibility();
+	resetInput('tip');
+});
+
+resetBtn.addEventListener('click', function () {
+	resetInput('bill');
+	resetInput('tip');
+	message.classList.add('hidden');
+});
+
+// Remove red border error styling as soon as user puts in correctly formatted input:
+inputBill.addEventListener('keyup', function (e) {
+	instantSanitizeInput('bill', e.target.value);
+});
+
+inputTip.addEventListener('keyup', function (e) {
+	instantSanitizeInput('tip', e.target.value);
+});
+/////////////////////////////////////////////////////////
+
+calcBtn.addEventListener('click', function () {
+	let bill = document.getElementById('bill').value;
+	let tip = document.getElementById('tip').value;
+
+	if (!sanitizeInput(bill, tip)) return;
+
+	const [billNum, tipNum, total] = calcTipp(bill, tip);
+
+	setMessage(
+		`You want to give a tip of ${tip}%.
+	    <br> YOUR BILL: ${billNum.toFixed(2)}
+	    <br>💝 YOUR TIP: ${tipNum.toFixed(2)}
 	    <br>💸 YOUR TOTAL: ${total.toFixed(2)}`
 	);
-	//Reset the input fields
-	// resetInput('bill');
-	// resetInput('tip');
 });
