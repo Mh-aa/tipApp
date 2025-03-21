@@ -102,7 +102,7 @@ const calcTipp = function (tip) {
 	removeHidden();
 
 	// Remove red border from input field in case they are still visible from previous error handling:
-	styleBorder('bill', '1px solid lightgray');
+	styleBorder('bill', 'none');
 
 	setMessage(
 		`You want to give a tip of ${tip}%.
