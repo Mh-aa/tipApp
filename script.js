@@ -33,7 +33,7 @@ const removeHidden = function () {
 	message.classList.remove('hidden');
 };
 
-const sanitizeInput = function (bill, tip) {
+const validateInput = function (bill, tip) {
 	billValid = true;
 	tipValid = true;
 
@@ -59,7 +59,7 @@ const sanitizeInput = function (bill, tip) {
 	return true;
 };
 
-const instantSanitizeInput = function (inputField, inputEvent) {
+const instantValidateInput = function (inputField, inputEvent) {
 	if (/^\d+([.,]\d{1,2})?$/.test(inputEvent)) {
 		styleBorder(inputField, 'none');
 		message.classList.add('hidden');
@@ -89,14 +89,14 @@ const toggleVisibility = function () {
 const calcTipp = function (tip) {
 	let bill = document.getElementById('bill').value;
 
-	if (!sanitizeInput(bill, tip)) return;
+	if (!validateInput(bill, tip)) return;
 
 	bill = bill.replace(',', '.');
-	bill = Number(bill);
-	tip = Number(tip);
+	let billNum = Number(bill);
+	let tipNum = Number(tip);
 
-	const tipCalc = bill * (tip / 100);
-	const total = tipCalc + bill;
+	const tipCalc = billNum * (tipNum / 100);
+	const total = tipCalc + billNum;
 
 	// Make the <p> element visible
 	removeHidden();
@@ -105,12 +105,11 @@ const calcTipp = function (tip) {
 	styleBorder('bill', 'none');
 
 	setMessage(
-		`You want to give a tip of ${tip}%.
-        <br> YOUR BILL: ${bill.toFixed(2)} 
+		`You want to give a tip of ${tipNum}%.
+        <br> YOUR BILL: ${billNum.toFixed(2)} 
         <br>💝 YOUR TIP: ${tipCalc.toFixed(2)}
         <br>💸 YOUR TOTAL: ${total.toFixed(2)}`
 	);
-	return [bill, tip, total];
 };
 
 for (let btn of [btn5Percent, btn7Percent, btn10Percent]) {
@@ -142,11 +141,11 @@ resetBtn.addEventListener('click', function () {
 
 // Remove red border error styling as soon as user puts in correctly formatted input:
 inputBill.addEventListener('keyup', function (e) {
-	instantSanitizeInput('bill', e.target.value);
+	instantValidateInput('bill', e.target.value);
 });
 
 inputTip.addEventListener('keyup', function (e) {
-	instantSanitizeInput('tip', e.target.value);
+	instantValidateInput('tip', e.target.value);
 });
 /////////////////////////////////////////////////////////
 
@@ -154,14 +153,6 @@ calcBtn.addEventListener('click', function () {
 	let bill = document.getElementById('bill').value;
 	let tip = document.getElementById('tip').value;
 
-	if (!sanitizeInput(bill, tip)) return;
-
-	const [billNum, tipNum, total] = calcTipp(bill, tip);
-
-	setMessage(
-		`You want to give a tip of ${tip}%.
-	    <br> YOUR BILL: ${billNum.toFixed(2)}
-	    <br>💝 YOUR TIP: ${tipNum.toFixed(2)}
-	    <br>💸 YOUR TOTAL: ${total.toFixed(2)}`
-	);
+	if (!validateInput(bill, tip)) return;
+	calcTipp(tip);
 });
