@@ -15,6 +15,8 @@ const cancelBtn = document.getElementById('cancel-button');
 const resetBtn = document.getElementById('reset');
 const labelCustom = document.getElementById('label__custom');
 
+const hideButtons = document.querySelectorAll('[data-action="hide"]');
+
 let billValid, tipValid;
 
 const styleBorder = function (element, style) {
@@ -74,7 +76,7 @@ const toggleVisibility = function () {
 	for (let element of [labelCustom, inputTip, calcBtn, cancelBtn]) {
 		element.classList.toggle('hidden');
 	}
-
+	/* 
 	for (let element of [
 		customBtn,
 		btn5Percent,
@@ -83,7 +85,11 @@ const toggleVisibility = function () {
 		resetBtn,
 	]) {
 		element.classList.toggle('hidden');
-	}
+	} */
+
+	hideButtons.forEach((btn) => {
+		btn.classList.toggle('hidden');
+	});
 };
 
 const calcTipp = function (tip) {
@@ -123,6 +129,7 @@ for (let btn of [btn5Percent, btn7Percent, btn10Percent]) {
 // Hides: three default buttons, custom button, reset button
 customBtn.addEventListener('click', function () {
 	toggleVisibility();
+	console.log('click');
 });
 
 // CancelBtn functionalty:
