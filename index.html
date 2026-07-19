@@ -3,9 +3,11 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="robots" content="noindex, nofollow" />
 		<title>Tip App</title>
 		<link rel="stylesheet" href="css/fonts.css" />
 		<link rel="stylesheet" href="css/style.css" />
+		<script src="./script.js" defer></script>
 	</head>
 	<body class="site">
 		<header>
@@ -13,66 +15,75 @@
 		</header>
 		<main class="site-content">
 			<form class="wrapper">
-				<label for="bill">Input your bill</label>
-				<input
-					type="text"
-					id="bill"
-					name="bill"
-					placeholder="E.g.: '10.00'"
-				/>
-				<div class="buttons-inline" data-action="hide">
-					<button type="button" class="btn btn__small" id="5">
-						5%
-					</button>
-					<button type="button" class="btn btn__small" id="7">
-						7%
-					</button>
-					<button type="button" class="btn btn__small" id="10">
-						10%
-					</button>
-				</div>
-				<div class="buttons-inline" data-action="hide">
-					<button type="button" class="btn btn__calc" id="custom">
-						Custom tip
-					</button>
-					<button
-						type="button"
-						class="btn btn__calc cancel"
-						id="reset"
-					>
-						Reset
-					</button>
-				</div>
-				<label for="tip" class="hidden" id="label__custom"
-					>Input your custom tip</label
+				<div class="overlay" aria-hidden="true"></div>
+				<div
+					class="modal-input"
+					role="dialog"
+					aria-modal="true"
+					aria-labelledby="custom-tip-title"
 				>
-				<input
-					type="text"
-					id="tip"
-					placeholder="Tip in %, e.g.: '10'"
-					class="hidden"
-				/>
-				<div class="buttons-inline">
-					<button
-						type="button"
-						class="btn btn__calc hidden"
-						id="calc-button"
-					>
-						Calculate!
+					<div>
+						<h2 id="custom-tip-title">
+							Eigenen Prozentsatz eingeben
+						</h2>
+						<label for="custom-tip-input">Prozentsatz</label>
+						<input type="text" id="custom-tip-input" />
+					</div>
+					<div class="inline">
+						<button type="button" class="btn" id="apply">
+							Übernehmen
+						</button>
+						<button
+							type="button"
+							class="btn btn-secondary"
+							id="cancel"
+						>
+							Abbrechen
+						</button>
+					</div>
+				</div>
+				<div>
+					<label for="bill-input">Rechnungsbetrag</label>
+					<input
+						type="text"
+						id="bill-input"
+						name="bill-input"
+						value="0,00 €"
+						inputmode="numeric"
+						required
+					/>
+				</div>
+				<div class="inline">
+					<button type="button" class="btn" data-tip="5">5%</button>
+					<button type="button" class="btn" data-tip="7">7%</button>
+					<button type="button" class="btn" data-tip="10">10%</button>
+				</div>
+				<div class="inline">
+					<button type="button" class="btn" id="custom">
+						Eigene %
 					</button>
-					<button
-						type="button"
-						class="btn btn__calc cancel hidden"
-						id="cancel-button"
-					>
-						Cancel
+					<button type="reset" class="btn btn-secondary" id="reset">
+						Zurücksetzen
 					</button>
 				</div>
-				<p class="hidden" id="message"></p>
+				<dl class="paper">
+					<div class="inline">
+						<dt>Rechnungsbetrag:</dt>
+						<dd id="bill-result" aria-live="polite">0,00 €</dd>
+					</div>
+					<div class="inline">
+						<dt>Trinkgeld:</dt>
+						<dd id="tip-result" aria-live="polite">0,00 €</dd>
+					</div>
+					<div class="inline">
+						<dt>Gesamt:</dt>
+						<dd id="total-result" aria-live="polite">0,00 €</dd>
+					</div>
+				</dl>
 			</form>
 		</main>
 		<footer class="footer">
-			<div class="footer__container wrapper">
+			<div class="footer__container">
 				<p>Tip App © 2026</p>
 				<nav aria-label="Footer-Navigation">
 					<ul class="footer__list">
@@ -84,22 +95,7 @@
 						</li>
 					</ul>
 				</nav>
-				<div class="footer__meta">
-					<p>
-						Icons by
-						<a
-							target="_blank"
-							href="https://icons8.com"
-							rel="noopener noreferrer"
-							>Icons8
-							<span class="sr-only"
-								>(öffnet in neuem Tab)</span
-							></a
-						>
-					</p>
-				</div>
 			</div>
 		</footer>
-		<script src="./script.js" charset="utf-8"></script>
 	</body>
 </html>
