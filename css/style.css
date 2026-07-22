@@ -10,8 +10,9 @@
 		'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 
 	--fs-body: clamp(1rem, calc(0.3rem + 3.3vw), 1.5rem);
-	--fs-body-small: 0.875rem;
+	--fs-body-sm: clamp(0.875rem, calc(0.7083rem + 0.8333vw), 1rem);
 	--fs-heading: clamp(2rem, 0.6667rem + 6.6667vw, 3rem);
+	--fs-heading-sm: 1.5rem;
 	--fw-regular: 400;
 
 	/* Base 0.5 */
@@ -22,7 +23,7 @@
 	--space-xl: 3rem;
 
 	--btn-padding-block: 0.5em;
-	--btn-padding-inline: 1.25em;
+	--btn-padding-inline: 0.75em;
 
 	--container-width: min(35rem, calc(100% - var(--space-lg) * 2));
 
@@ -144,7 +145,7 @@ body {
 	border-radius: 5px;
 	z-index: 100;
 	width: min(90vw, 30rem);
-	inset: 30% auto auto 50%;
+	inset: 50% auto auto 50%;
 	opacity: 0;
 	pointer-events: none;
 	transform: translate(-50%, -30px) scale(0.95);
@@ -156,6 +157,10 @@ body {
 	opacity: 1;
 	transform: translate(-50%, -50%) scale(1);
 	pointer-events: auto;
+}
+
+.modal-input h2 {
+	font-size: var(--fs-heading-sm);
 }
 
 .inline {
@@ -199,7 +204,7 @@ h1 {
 label {
 	text-align: left;
 	display: block;
-	font-size: clamp(var(--fs-body-small), calc(0.4rem + 2.2vw), 1rem);
+	font-size: clamp(var(--fs-body-sm), calc(0.4rem + 2.2vw), 1rem);
 }
 
 input {
@@ -286,7 +291,7 @@ input.error {
 
 .footer {
 	background-color: #ffffff;
-	font-size: 0.875rem;
+	font-size: var(--fs-body-sm);
 	line-height: 1.4;
 	color: var(--clr-main-light);
 	text-align: center;
