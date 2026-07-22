@@ -11,24 +11,35 @@ const modal = document.querySelector('.modal-input');
 const inputfieldBill = document.getElementById('bill-input');
 let digits = '0';
 
+/* Ansatz: "Ich verwalte einen Zustand und benutze das Inputfeld nur als Ausgabe." */
+
 function assertInputIsNumber(input) {
 	return /^\d+$/.test(input);
 }
 
+/* TODO Überlegen ob ich das noch einbaue: */
+/* function getCursorPosition() {
+	return inputfieldBill.value.indexOf(' ');
+} */
+
 function positionCursor(pos) {
-	inputfieldBill.setSelectionRange(pos, pos);
+	requestAnimationFrame(() => {
+		inputfieldBill.setSelectionRange(pos, pos);
+	});
 }
 
-function renderBillInput(val) {
-	let paddedDigits = val.padStart(3, '0');
+function getFormattedBillInput() {
+	let paddedDigits = digits.padStart(3, '0');
 
-	/* FormattedInput kann sich ändern, z.B. wenn ich Tausenderpunkte einführe, deswegen setzen wir es erst Mal als Variable: */
-	let formattedInput = `${paddedDigits.slice(
+	return `${paddedDigits.slice(
 		0,
 		paddedDigits.length - 2
 	)},${paddedDigits.slice(paddedDigits.length - 2)} €`;
+}
 
-	/* Nutzen es hier: */
+function renderBillInput() {
+	const formattedInput = getFormattedBillInput();
+
 	inputfieldBill.value = formattedInput;
 
 	/* Und hier um die Cursorposition dynamisch am Leerzeichen zu aktualisieren. So kann man später z.B. das € Zeichen in EUR ändern, oder . für die Tausenderstellen einfügen und das hat dann keinen Einfluss auf de Berechnung der Cursorposition: */
@@ -68,38 +79,61 @@ input
  |
  └── input   → validateBillInput() */
 
-inputfieldBill.addEventListener('input', (e) => {
-	console.log('input:', inputfieldBill.value);
-});
-
-function handleBillInput(e) {
-	e.preventDefault();
-
+function handleBillBeforeInputEvent(e) {
 	inputfieldBill.classList.remove('error');
 
-	if (e.key === 'Backspace') {
-		const value = inputfieldBill.value.replace(/[^\d]/g, '');
-		const newValue = value.slice(0, -1);
+	if (e.inputType === 'deleteContentBackward') {
+		e.preventDefault();
 
+		const newValue = digits.slice(0, -1) || '0';
 		digits = newValue;
-		renderBillInput(newValue);
+
+		renderBillInput();
 
 		return;
 	}
 
-	if (digits.length > 9) return;
+	if (e.inputType == 'insertText') {
+		e.preventDefault();
 
-	if (!assertInputIsNumber(e.key)) {
-		inputfieldBill.classList.add('error');
+		if (digits.length > 9) return;
+
+		if (!assertInputIsNumber(e.data)) {
+			inputfieldBill.classList.add('error');
+			return;
+		}
+
+		digits += e.data;
+
+		/* Convert to Number, to get rid of leading zeros, then back to string */
+		digits = (+digits).toString();
+		renderBillInput();
+
 		return;
 	}
-
-	digits += e.key;
-
-	/* Convert to Number, to get rid of leading zeros, then back to string */
-	digits = (+digits).toString();
-	renderBillInput(digits);
 }
+/* TODO EventListener in init() initialisieren */
+/* Mobile Bug beheben, dass bei Backspace die letzte 0 gelöscht wird: */
+
+/* User kann den Cursor nicht mehr innerhalb des Eingabefeldes verschieben: */
+document.addEventListener('selectionchange', () => {
+	if (document.activeElement !== inputfieldBill) return;
+
+	const pos = inputfieldBill.value.indexOf(' ');
+
+	if (inputfieldBill.selectionStart !== pos) {
+		inputfieldBill.setSelectionRange(pos, pos);
+	}
+});
+
+/* Abgleichen ob der Wert des Inputfeldes dem Wert des formatierten Input netspricht, wenn nicht, neu rendern: */
+inputfieldBill.addEventListener('input', () => {
+	const expectedValue = getFormattedBillInput();
+
+	if (inputfieldBill.value !== expectedValue) {
+		renderBillInput();
+	}
+});
 
 function calcTip(tip) {
 	const paddedDigits = digits.padStart(3, '0');
@@ -117,15 +151,17 @@ function calcTip(tip) {
 }
 
 function init() {
+	/* Cursorposition initialisieren: */
 	inputfieldBill.focus();
-	/* Cursorposition ein Mal initialisieren: */
 	let pos = inputfieldBill.value.indexOf(' ');
 	positionCursor(pos);
 
-	if (!form) return;
+	if (!form || !overlay || !modal || !inputfieldBill) return;
 
-	inputfieldBill.addEventListener('keydown', handleBillInput);
-
+	/* Event Listener initialisieren */
+	inputfieldBill.addEventListener('beforeinput', handleBillBeforeInputEvent);
+	/* 	inputfieldBill.addEventListener('input', handleBillInputEvent);
+	 */
 	form.addEventListener('click', function (e) {
 		const clicked = e.target.closest('.btn');
 
