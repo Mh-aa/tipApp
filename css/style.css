@@ -9,7 +9,7 @@
 	--ff-heading: 'Tiny5-Regular', 'Lucida Sans', 'Lucida Sans Regular',
 		'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 
-	--fs-body: clamp(1rem, calc(0.3rem + 3.3vw), 1.5rem);
+	--fs-body: clamp(0.9rem, 0.1rem + 4vw, 1.5rem);
 	--fs-body-sm: clamp(0.875rem, calc(0.7083rem + 0.8333vw), 1rem);
 	--fs-heading: clamp(2rem, 0.6667rem + 6.6667vw, 3rem);
 	--fs-heading-sm: 1.5rem;
@@ -23,7 +23,11 @@
 	--space-xl: 3rem;
 
 	--btn-padding-block: 0.5em;
-	--btn-padding-inline: 0.75em;
+	--btn-padding-inline: clamp(
+		calc(var(--space-xs) * 1.5),
+		calc(-0.92rem + 8.3vw),
+		var(--space-lg)
+	);
 
 	--container-width: min(35rem, calc(100% - var(--space-lg) * 2));
 
@@ -277,13 +281,17 @@ input.error {
 	background-size: 24px 24px;
 	border: 1px solid black;
 	border-radius: 5px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--space-xs);
+	justify-items: end;
 }
 
-@media (min-width: 30em) {
+/* @media (min-width: 30em) {
 	.paper {
 		height: auto;
 	}
-}
+} */
 
 .hidden {
 	display: none;

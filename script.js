@@ -1,16 +1,17 @@
 'use strict';
 //TODO:
-/* - Input-Event einbauen zum überprüfen am Ende
+/*
 - Pfeiltasten in Keydown einbauen ODER stumm schlucken (aktuell wird ein Error ausgelöst)
-- Copy/Paste Event handlen
-- Eigener Prozentsatz-Input bauen */
+- Copy/Paste Event handlen */
 
 const form = document.querySelector('form');
 const overlay = document.querySelector('.overlay');
 const modal = document.querySelector('.modal-input');
 const inputfieldBill = document.getElementById('bill-input');
 const inputfieldTip = document.getElementById('custom-tip-input');
-const applyBtn = document.getElementById('apply');
+const billResult = document.getElementById('bill-result');
+const tipResult = document.getElementById('tip-result');
+const totalResult = document.getElementById('total-result');
 let digits = '0';
 let percent = '';
 
@@ -121,67 +122,38 @@ function handleBeforeInputEvent(e) {
 	positionCursor(pos);
 } */
 
-/* function handleTipBeforeInputEvent(e) {
-	inputfieldTip.classList.remove('error');
-
-
-	if (e.inputType === 'deleteContentBackward') {
-		e.preventDefault();
-
-		const newValue = percent.slice(0, -1) || '0';
-		percent = newValue;
-
-		renderTipInput();
-
-		return;
-	}
-
-	if (e.inputType == 'insertText') {
-		e.preventDefault();
-
-		if (percent.length > 2) return;
-
-		if (!assertInputIsNumber(e.data)) {
-			inputfieldTip.classList.add('error');
-			return;
-		}
-
-		percent += e.data;
-
-		percent = (+percent).toString();
-		renderTipInput();
-
-		return;
-	}
-} */
-
-/* TODO EventListener in init() initialisieren */
-/* Mobile Bug beheben, dass bei Backspace die letzte 0 gelöscht wird: */
-
 /* User kann den Cursor nicht mehr innerhalb des Eingabefeldes verschieben: */
-document.addEventListener('selectionchange', () => {
-	if (document.activeElement !== inputfieldBill) return;
+function handleSelectionChange() {
+	/* if (document.activeElement !== inputfieldBill) return; */
+	let pos;
 
-	const pos = inputfieldBill.value.indexOf(' ');
-
-	if (inputfieldBill.selectionStart !== pos) {
+	if (
+		inputfieldBill.selectionStart !== pos &&
+		document.activeElement === inputfieldBill
+	) {
+		pos = inputfieldBill.value.indexOf(' ');
 		inputfieldBill.setSelectionRange(pos, pos);
 	}
-});
+	if (
+		inputfieldTip.selectionStart !== pos &&
+		document.activeElement === inputfieldTip
+	) {
+		pos = inputfieldTip.value.indexOf(' ');
+		inputfieldTip.setSelectionRange(pos, pos);
+	}
+}
 
 /* Abgleichen ob der Wert des Inputfeldes dem Wert des formatierten Input netspricht, wenn nicht, neu rendern: */
-inputfieldBill.addEventListener('input', () => {
+/* TODO Noch für Custom prozentfeld fixen */
+function handleInputChange() {
 	const expectedValue = getFormattedInput();
 
 	if (inputfieldBill.value !== expectedValue) {
 		renderInput();
 	}
-});
+}
 
 function calcTip(tip = 0) {
-	const billResult = document.getElementById('bill-result');
-	const tipResult = document.getElementById('tip-result');
-	const totalResult = document.getElementById('total-result');
 	const paddedDigits = digits.padStart(3, '0');
 
 	const cents = paddedDigits.slice(paddedDigits.length - 2);
@@ -193,6 +165,7 @@ function calcTip(tip = 0) {
 	const tipCalc = billNum * (tipNum / 100);
 	const total = tipCalc + billNum;
 
+	/* TODO billResult als 12.00 anzeigen wenn keine Cent angegeben sind */
 	billResult.innerText = `${billNum} €`;
 	tipResult.innerText = `${tipCalc.toFixed(2)} €`;
 	totalResult.innerText = `${total.toFixed(2)} €`;
@@ -209,7 +182,10 @@ function init() {
 
 	/* Event Listener initialisieren */
 	inputfieldBill.addEventListener('beforeinput', handleBeforeInputEvent);
+	inputfieldBill.addEventListener('input', handleInputChange);
 	inputfieldTip.addEventListener('beforeinput', handleBeforeInputEvent);
+	inputfieldTip.addEventListener('input', handleInputChange);
+	document.addEventListener('selectionchange', handleSelectionChange);
 
 	form.addEventListener('click', function (e) {
 		const clicked = e.target.closest('.btn');
@@ -239,6 +215,9 @@ function init() {
 				modal.classList.remove('modal-open');
 
 			case 'reset':
+				billResult.innerText = `0,00 €`;
+				tipResult.innerText = `0,00 €`;
+				totalResult.innerText = `0,00 €`;
 				break;
 		}
 	});
