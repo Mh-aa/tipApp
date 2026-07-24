@@ -1,7 +1,6 @@
 'use strict';
 //TODO:
 /*
-- Pfeiltasten in Keydown einbauen ODER stumm schlucken (aktuell wird ein Error ausgelöst)
 - Copy/Paste Event handlen */
 
 const form = document.querySelector('form');
@@ -17,30 +16,22 @@ let percent = '';
 
 /* Ansatz: "Ich verwalte einen Zustand und benutze das Inputfeld nur als Ausgabe." */
 
+/* Helper Functions */
 function assertInputIsNumber(input) {
 	return /^\d+$/.test(input);
 }
 
-/* TODO Überlegen ob ich das noch einbaue: */
-/* function getCursorPosition() {
-	return inputfieldBill.value.indexOf(' ');
-} */
-
-function positionCursor(pos) {
+function positionCursor(pos, el) {
 	requestAnimationFrame(() => {
-		inputfieldBill.setSelectionRange(pos, pos);
+		el.setSelectionRange(pos, pos);
 	});
 }
 
 function getFormattedInput(el) {
-	if (el === 'bill') {
-		let paddedDigits = digits.padStart(3, '0');
-
-		return `${paddedDigits.slice(
-			0,
-			paddedDigits.length - 2
-		)},${paddedDigits.slice(paddedDigits.length - 2)} €`;
-	} else if (el === 'tip') {
+	if (el.id === 'bill-input') {
+		const paddedDigits = digits.padStart(3, '0');
+		return `${paddedDigits.slice(0, -2)},${paddedDigits.slice(-2)} €`;
+	} else if (el.id === 'custom-tip-input') {
 		return `${percent} %`;
 	}
 }
@@ -48,21 +39,21 @@ function getFormattedInput(el) {
 function renderInput(el) {
 	let formattedInput = getFormattedInput(el);
 
-	if (el === 'bill') {
+	if (el.id === 'bill-input') {
 		inputfieldBill.value = formattedInput;
-	} else if (el === 'tip') {
+	} else if (el.id === 'custom-tip-input') {
 		inputfieldTip.value = formattedInput;
 	}
-
-	/* Und hier um die Cursorposition dynamisch am Leerzeichen zu aktualisieren. So kann man später z.B. das € Zeichen in EUR ändern, oder . für die Tausenderstellen einfügen und das hat dann keinen Einfluss auf de Berechnung der Cursorposition: */
+	/* Dynamische Cursorpositionierung am Leerzeichen: */
 	let posDynamic = formattedInput.indexOf(' ');
-	positionCursor(posDynamic);
+	positionCursor(posDynamic, el);
 }
 
 function handleDeleteContentBackward(el) {
 	return el.slice(0, -1) || '0';
 }
 
+/* Event Listener Functions */
 function handleBeforeInputEvent(e) {
 	inputfieldBill.classList.remove('error');
 
@@ -71,11 +62,11 @@ function handleBeforeInputEvent(e) {
 
 		if (e.srcElement.id === 'bill-input') {
 			digits = handleDeleteContentBackward(digits);
-			renderInput('bill');
+			renderInput(e.srcElement);
 		}
 		if (e.srcElement.id === 'custom-tip-input') {
 			percent = handleDeleteContentBackward(percent);
-			renderInput('tip');
+			renderInput(e.srcElement);
 		}
 		return;
 	}
@@ -83,6 +74,7 @@ function handleBeforeInputEvent(e) {
 	if (e.inputType == 'insertText') {
 		e.preventDefault();
 
+		/* TODO: Das hier noch umbauen und straffen */
 		if (e.srcElement.id === 'bill-input') {
 			if (digits.length > 5) return;
 
@@ -95,7 +87,7 @@ function handleBeforeInputEvent(e) {
 
 			/* Convert to Number, to get rid of leading zeros, then back to string */
 			digits = (+digits).toString();
-			renderInput('bill');
+			renderInput(e.srcElement);
 		}
 		if (e.srcElement.id === 'custom-tip-input') {
 			if (percent.length > 2) return;
@@ -108,56 +100,52 @@ function handleBeforeInputEvent(e) {
 			percent += e.data;
 
 			percent = (+percent).toString();
-			renderInput('tip');
+			renderInput(e.srcElement);
 		}
 
 		return;
 	}
 }
 
-/* Das gehört in die Focustrap */
-/* if (inputfieldTip.classList.contains('modal-open')) {
-	inputfieldTip.focus();
-	pos = inputfieldTip.value.indexOf(' ');
-	positionCursor(pos);
-} */
-
 /* User kann den Cursor nicht mehr innerhalb des Eingabefeldes verschieben: */
 function handleSelectionChange() {
-	/* if (document.activeElement !== inputfieldBill) return; */
-	let pos;
+	const activeElement = document.activeElement;
 
-	if (
-		inputfieldBill.selectionStart !== pos &&
-		document.activeElement === inputfieldBill
-	) {
-		pos = inputfieldBill.value.indexOf(' ');
-		inputfieldBill.setSelectionRange(pos, pos);
-	}
-	if (
-		inputfieldTip.selectionStart !== pos &&
-		document.activeElement === inputfieldTip
-	) {
-		pos = inputfieldTip.value.indexOf(' ');
-		inputfieldTip.setSelectionRange(pos, pos);
-	}
+	/* Wenn Fokus nicht auf Inputelement liegt: */
+	if (!(activeElement instanceof HTMLInputElement)) return;
+
+	let pos = activeElement.value.indexOf(' ');
+	/* Falls kein Leerzeichen vorhanden sein sollte */
+	if (pos === -1) return;
+
+	if (activeElement.selectionStart !== pos)
+		positionCursor(pos, activeElement);
 }
 
 /* Abgleichen ob der Wert des Inputfeldes dem Wert des formatierten Input netspricht, wenn nicht, neu rendern: */
-/* TODO Noch für Custom prozentfeld fixen */
-function handleInputChange() {
-	const expectedValue = getFormattedInput();
+function handleInputChange(e) {
+	let expectedValue = '';
 
-	if (inputfieldBill.value !== expectedValue) {
-		renderInput();
+	if (e.currentTarget.id === 'bill-input') {
+		expectedValue = getFormattedInput(e.currentTarget);
+
+		if (inputfieldBill.value !== expectedValue) {
+			renderInput(e.currentTarget);
+		}
+	} else if (e.currentTarget.id === 'custom-tip-input') {
+		expectedValue = getFormattedInput(e.currentTarget);
+
+		if (inputfieldTip.value !== expectedValue) {
+			renderInput(e.currentTarget);
+		}
 	}
 }
 
 function calcTip(tip = 0) {
 	const paddedDigits = digits.padStart(3, '0');
 
-	const cents = paddedDigits.slice(paddedDigits.length - 2);
-	const euro = paddedDigits.slice(0, paddedDigits.length - 2);
+	const cents = paddedDigits.slice(-2);
+	const euro = paddedDigits.slice(0, -2);
 
 	let billNum = Number(`${euro}.${cents}`);
 	let tipNum = Number(tip);
@@ -165,10 +153,70 @@ function calcTip(tip = 0) {
 	const tipCalc = billNum * (tipNum / 100);
 	const total = tipCalc + billNum;
 
-	/* TODO billResult als 12.00 anzeigen wenn keine Cent angegeben sind */
-	billResult.innerText = `${billNum} €`;
+	billResult.innerText = getFormattedInput(inputfieldBill);
 	tipResult.innerText = `${tipCalc.toFixed(2)} €`;
 	totalResult.innerText = `${total.toFixed(2)} €`;
+}
+
+/* TODO: Focustrap bauen */
+/* Das gehört in die Focustrap */
+/* if (inputfieldTip.classList.contains('modal-open')) {
+	inputfieldTip.focus();
+	pos = inputfieldTip.value.indexOf(' ');
+	positionCursor(pos);
+} */
+
+/* function focusTrap(e) {}
+
+function setModalState(state) {
+	let isOpened = state;
+
+	overlay.classList.add('modal-open');
+	modal.classList.add('modal-open');
+
+	if (isOpened) {
+		document.addEventListener('keydown', focusTrap);
+	} else {
+		document.removeEventListener('keydown', focusTrap);
+	}
+} */
+
+function handleFormClick(e) {
+	const clicked = e.target.closest('.btn');
+
+	if (!clicked) return;
+
+	/* Prozentbuttons dynamisch ansprechen über dataset: */
+	if (clicked.dataset.tip) {
+		calcTip(clicked.dataset.tip);
+		return;
+	}
+
+	switch (clicked.id) {
+		case 'custom':
+			/* setModalState(true); */
+			overlay.classList.add('modal-open');
+			modal.classList.add('modal-open');
+			break;
+
+		case 'apply':
+			calcTip(percent);
+			overlay.classList.remove('modal-open');
+			modal.classList.remove('modal-open');
+			break;
+
+		case 'cancel':
+			/* setModalState(false); */
+			overlay.classList.remove('modal-open');
+			modal.classList.remove('modal-open');
+			break;
+
+		case 'reset':
+			[billResult, tipResult, totalResult].forEach(
+				(el) => (el.innerText = `0,00 €`)
+			);
+			break;
+	}
 }
 
 function init() {
@@ -178,49 +226,17 @@ function init() {
 	/* Cursorposition initialisieren: */
 	inputfieldBill.focus();
 	let pos = inputfieldBill.value.indexOf(' ');
-	positionCursor(pos);
+	positionCursor(pos, inputfieldBill);
 
-	/* Event Listener initialisieren */
-	inputfieldBill.addEventListener('beforeinput', handleBeforeInputEvent);
-	inputfieldBill.addEventListener('input', handleInputChange);
-	inputfieldTip.addEventListener('beforeinput', handleBeforeInputEvent);
-	inputfieldTip.addEventListener('input', handleInputChange);
+	/* Weitere Event Listener initialisieren */
+	[inputfieldBill, inputfieldTip].forEach((el) => {
+		el.addEventListener('beforeinput', handleBeforeInputEvent);
+		el.addEventListener('input', handleInputChange);
+	});
+
 	document.addEventListener('selectionchange', handleSelectionChange);
 
-	form.addEventListener('click', function (e) {
-		const clicked = e.target.closest('.btn');
-
-		if (!clicked) return;
-
-		/* Prozentbuttons aus dem switch-statement rausnehmen und einfach prüfen ob ein dataset-Attribut vorhanden ist. Das skaliert besser, weil wir so beliebig viele Buttons hinzufügen können ohne mehr cases hinzufügen zu müssen: */
-		if (clicked.dataset.tip) {
-			calcTip(clicked.dataset.tip);
-			return;
-		}
-
-		switch (clicked.id) {
-			case 'custom':
-				overlay.classList.add('modal-open');
-				modal.classList.add('modal-open');
-				break;
-
-			case 'apply':
-				calcTip(percent);
-				overlay.classList.remove('modal-open');
-				modal.classList.remove('modal-open');
-				break;
-
-			case 'cancel':
-				overlay.classList.remove('modal-open');
-				modal.classList.remove('modal-open');
-
-			case 'reset':
-				billResult.innerText = `0,00 €`;
-				tipResult.innerText = `0,00 €`;
-				totalResult.innerText = `0,00 €`;
-				break;
-		}
-	});
+	form.addEventListener('click', handleFormClick);
 }
 
 init();
