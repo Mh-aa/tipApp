@@ -39,11 +39,8 @@ function getFormattedInput(el) {
 function renderInput(el) {
 	let formattedInput = getFormattedInput(el);
 
-	if (el.id === 'bill-input') {
-		inputfieldBill.value = formattedInput;
-	} else if (el.id === 'custom-tip-input') {
-		inputfieldTip.value = formattedInput;
-	}
+	el.value = formattedInput;
+
 	/* Dynamische Cursorpositionierung am Leerzeichen: */
 	let posDynamic = formattedInput.indexOf(' ');
 	positionCursor(posDynamic, el);
@@ -53,7 +50,7 @@ function handleDeleteContentBackward(el) {
 	return el.slice(0, -1) || '0';
 }
 
-/* Event Listener Functions */
+/* Inputfelder Functions */
 function handleBeforeInputEvent(e) {
 	inputfieldBill.classList.remove('error');
 
@@ -107,6 +104,7 @@ function handleBeforeInputEvent(e) {
 	}
 }
 
+/* Mobile Inputfeld-Bugs beheben: */
 /* User kann den Cursor nicht mehr innerhalb des Eingabefeldes verschieben: */
 function handleSelectionChange() {
 	const activeElement = document.activeElement;
@@ -124,23 +122,15 @@ function handleSelectionChange() {
 
 /* Abgleichen ob der Wert des Inputfeldes dem Wert des formatierten Input netspricht, wenn nicht, neu rendern: */
 function handleInputChange(e) {
-	let expectedValue = '';
+	const input = e.currentTarget;
+	let expectedValue = getFormattedInput(input);
 
-	if (e.currentTarget.id === 'bill-input') {
-		expectedValue = getFormattedInput(e.currentTarget);
-
-		if (inputfieldBill.value !== expectedValue) {
-			renderInput(e.currentTarget);
-		}
-	} else if (e.currentTarget.id === 'custom-tip-input') {
-		expectedValue = getFormattedInput(e.currentTarget);
-
-		if (inputfieldTip.value !== expectedValue) {
-			renderInput(e.currentTarget);
-		}
+	if (input.value !== expectedValue) {
+		renderInput(input);
 	}
 }
 
+/* Tiprechner Funktionalität */
 function calcTip(tip = 0) {
 	const paddedDigits = digits.padStart(3, '0');
 
@@ -158,29 +148,51 @@ function calcTip(tip = 0) {
 	totalResult.innerText = `${total.toFixed(2)} €`;
 }
 
-/* TODO: Focustrap bauen */
-/* Das gehört in die Focustrap */
-/* if (inputfieldTip.classList.contains('modal-open')) {
-	inputfieldTip.focus();
-	pos = inputfieldTip.value.indexOf(' ');
-	positionCursor(pos);
-} */
+/* Modal window Functions */
+function focusTrap(e) {
+	if (e.key !== 'Tab') return;
 
-/* function focusTrap(e) {}
+	const focusableElements = modal.querySelectorAll('[data-focusable="true"]');
+	const firstElement = focusableElements[0];
+	const lastElement = focusableElements[focusableElements.length - 1];
 
-function setModalState(state) {
-	let isOpened = state;
+	if (e.shiftKey === true) {
+		if (document.activeElement === firstElement) {
+			e.preventDefault();
+			lastElement.focus();
+		}
+	} else {
+		if (document.activeElement === lastElement) {
+			e.preventDefault();
+			firstElement.focus();
+		}
+	}
+}
 
-	overlay.classList.add('modal-open');
-	modal.classList.add('modal-open');
+function setModalState(open) {
+	overlay.classList.toggle('modal-open', open);
+	modal.classList.toggle('modal-open', open);
+	modal.hidden = !open;
 
-	if (isOpened) {
+	if (open) {
+		inputfieldTip.focus();
+		let pos = inputfieldTip.value.indexOf(' ');
+		positionCursor(pos, inputfieldTip);
 		document.addEventListener('keydown', focusTrap);
 	} else {
 		document.removeEventListener('keydown', focusTrap);
+		inputfieldBill.focus();
 	}
-} */
+}
 
+function handleEscapeBtnModal(e) {
+	if (e.key !== 'Escape') return;
+	if (!modal.classList.contains('modal-open')) return;
+	inputfieldBill.focus();
+	setModalState(false);
+}
+
+/* Functionalität aller anderen Buttons */
 function handleFormClick(e) {
 	const clicked = e.target.closest('.btn');
 
@@ -194,27 +206,25 @@ function handleFormClick(e) {
 
 	switch (clicked.id) {
 		case 'custom':
-			/* setModalState(true); */
-			overlay.classList.add('modal-open');
-			modal.classList.add('modal-open');
+			const modalOpen = modal.classList.contains('modal-open');
+			setModalState(!modalOpen);
 			break;
 
 		case 'apply':
 			calcTip(percent);
-			overlay.classList.remove('modal-open');
-			modal.classList.remove('modal-open');
+			setModalState(false);
 			break;
 
 		case 'cancel':
-			/* setModalState(false); */
-			overlay.classList.remove('modal-open');
-			modal.classList.remove('modal-open');
+			inputfieldTip.value = `0,00 €`;
+			setModalState(false);
 			break;
 
 		case 'reset':
 			[billResult, tipResult, totalResult].forEach(
 				(el) => (el.innerText = `0,00 €`)
 			);
+			inputfieldTip.value = `0,00 €`;
 			break;
 	}
 }
@@ -235,6 +245,7 @@ function init() {
 	});
 
 	document.addEventListener('selectionchange', handleSelectionChange);
+	document.addEventListener('keydown', handleEscapeBtnModal);
 
 	form.addEventListener('click', handleFormClick);
 }

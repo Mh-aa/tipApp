@@ -21,6 +21,7 @@
 					role="dialog"
 					aria-modal="true"
 					aria-labelledby="custom-tip-title"
+					hidden
 				>
 					<h2 id="custom-tip-title">Eigenen Prozentsatz eingeben</h2>
 					<div>
@@ -32,16 +33,23 @@
 							value="0 %"
 							inputmode="numeric"
 							autocomplete="off"
+							data-focusable="true"
 						/>
 					</div>
 					<div class="inline">
-						<button type="button" class="btn" id="apply">
+						<button
+							type="button"
+							class="btn"
+							id="apply"
+							data-focusable="true"
+						>
 							Übernehmen
 						</button>
 						<button
 							type="button"
 							class="btn btn-secondary"
 							id="cancel"
+							data-focusable="true"
 						>
 							Abbrechen
 						</button>
