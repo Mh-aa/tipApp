@@ -1,7 +1,40 @@
 'use strict';
 //TODO:
 /*
-- Copy/Paste Event handlen */
+- Copy/Paste Event handlen
+- Richtige Font downloaden und Fontface vorbereiten
+- CSS sauber machen
+- CSS error so wie PayPal bauen mit wackeln */
+
+/* TODO
+id-Abfrage
+
+Das funktioniert, skaliert aber nicht besonders gut.
+
+Statt
+
+if (input.id === 'bill-input') {
+    digits = pastedText;
+} else if (input.id === 'custom-tip-input') {
+    percent = pastedText;
+}
+
+könntest du z. B. ein data-*-Attribut verwenden:
+
+<input data-model="digits">
+<input data-model="percent">
+
+Dann:
+
+switch (input.dataset.model) {
+    case 'digits':
+        digits = pastedText;
+        break;
+    case 'percent':
+        percent = pastedText;
+        break;
+}
+*/
 
 const form = document.querySelector('form');
 const overlay = document.querySelector('.overlay');
@@ -12,7 +45,7 @@ const billResult = document.getElementById('bill-result');
 const tipResult = document.getElementById('tip-result');
 const totalResult = document.getElementById('total-result');
 let digits = '0';
-let percent = '';
+let percent = '0';
 
 /* Ansatz: "Ich verwalte einen Zustand und benutze das Inputfeld nur als Ausgabe." */
 
@@ -52,54 +85,51 @@ function handleDeleteContentBackward(el) {
 
 /* Inputfelder Functions */
 function handleBeforeInputEvent(e) {
-	inputfieldBill.classList.remove('error');
+	const input = e.target;
+	if (!(input instanceof HTMLInputElement)) return;
+
+	input.classList.remove('error');
 
 	if (e.inputType === 'deleteContentBackward') {
 		e.preventDefault();
 
-		if (e.srcElement.id === 'bill-input') {
+		if (input.id === 'bill-input') {
 			digits = handleDeleteContentBackward(digits);
-			renderInput(e.srcElement);
-		}
-		if (e.srcElement.id === 'custom-tip-input') {
+		} else if (input.id === 'custom-tip-input') {
 			percent = handleDeleteContentBackward(percent);
-			renderInput(e.srcElement);
 		}
+
+		renderInput(input);
 		return;
 	}
 
-	if (e.inputType == 'insertText') {
+	if (e.inputType === 'insertText' || e.inputType === 'insertFromPaste') {
 		e.preventDefault();
 
-		/* TODO: Das hier noch umbauen und straffen */
-		if (e.srcElement.id === 'bill-input') {
+		const text =
+			e.inputType === 'insertText'
+				? e.data
+				: e.dataTransfer?.getData('text/plain') ?? e.data;
+
+		if (text == null) return;
+
+		if (!assertInputIsNumber(text)) {
+			input.classList.add('error');
+			return;
+		}
+
+		if (input.id === 'bill-input') {
 			if (digits.length > 5) return;
-
-			if (!assertInputIsNumber(e.data)) {
-				inputfieldBill.classList.add('error');
-				return;
-			}
-
-			digits += e.data;
-
-			/* Convert to Number, to get rid of leading zeros, then back to string */
+			digits += text;
+			/* Convert to Number to get rid of leading zeros, then back to string */
 			digits = (+digits).toString();
-			renderInput(e.srcElement);
-		}
-		if (e.srcElement.id === 'custom-tip-input') {
+		} else if (input.id === 'custom-tip-input') {
 			if (percent.length > 2) return;
-
-			if (!assertInputIsNumber(e.data)) {
-				inputfieldTip.classList.add('error');
-				return;
-			}
-
-			percent += e.data;
-
+			percent += text;
 			percent = (+percent).toString();
-			renderInput(e.srcElement);
 		}
 
+		renderInput(input);
 		return;
 	}
 }
@@ -109,7 +139,7 @@ function handleBeforeInputEvent(e) {
 function handleSelectionChange() {
 	const activeElement = document.activeElement;
 
-	/* Wenn Fokus nicht auf Inputelement liegt: */
+	/* Falls Fokus nicht auf Inputelement liegt: */
 	if (!(activeElement instanceof HTMLInputElement)) return;
 
 	let pos = activeElement.value.indexOf(' ');
@@ -120,7 +150,7 @@ function handleSelectionChange() {
 		positionCursor(pos, activeElement);
 }
 
-/* Abgleichen ob der Wert des Inputfeldes dem Wert des formatierten Input netspricht, wenn nicht, neu rendern: */
+/* Abgleichen ob der Wert des Inputfeldes dem Wert des formattierten Input entspricht, wenn nicht, neu rendern: */
 function handleInputChange(e) {
 	const input = e.currentTarget;
 	let expectedValue = getFormattedInput(input);
@@ -216,7 +246,8 @@ function handleFormClick(e) {
 			break;
 
 		case 'cancel':
-			inputfieldTip.value = `0,00 €`;
+			inputfieldTip.value = `0 %`;
+			percent = '0';
 			setModalState(false);
 			break;
 
@@ -224,7 +255,11 @@ function handleFormClick(e) {
 			[billResult, tipResult, totalResult].forEach(
 				(el) => (el.innerText = `0,00 €`)
 			);
-			inputfieldTip.value = `0,00 €`;
+			inputfieldTip.value = `0 %`;
+			percent = '0';
+			digits = '0';
+			percent = '0';
+			inputfieldBill.focus();
 			break;
 	}
 }
