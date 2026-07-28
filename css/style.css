@@ -5,9 +5,9 @@
 	--clr-accent-dark: hsl(74, 100%, 20%);
 	/* 
 	--ff-body: 'Quicksand', 'Trebuchet MS', Helvetica, sans-serif; */
-	--ff-body: monospace;
-	--ff-heading: 'Tiny5-Regular', 'Lucida Sans', 'Lucida Sans Regular',
-		'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	--ff-body: 'DM Mono', monospace;
+	--ff-heading: 'Tiny5', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+		'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 
 	--fs-body: clamp(0.9rem, 0.1rem + 4vw, 1.5rem);
 	--fs-body-sm: clamp(0.875rem, calc(0.7083rem + 0.8333vw), 1rem);
@@ -284,7 +284,15 @@ input.error {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: var(--space-xs);
-	justify-items: end;
+	/* justify-items: end; */
+}
+
+.left {
+	text-align: left;
+}
+
+.right {
+	text-align: right;
 }
 
 /* @media (min-width: 30em) {

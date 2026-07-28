@@ -1,15 +1,21 @@
+/* tiny5-regular - latin */
 @font-face {
 	font-display: swap;
-	font-family: 'Quicksand';
+	font-family: 'Tiny5';
 	font-style: normal;
 	font-weight: 400;
-	src: url(/fonts/Quicksand-Regular.ttf) format('truetype');
+	src: url('../fonts/tiny5-v3-latin-regular.woff2') format('woff2'),
+		/* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+			url('../fonts/tiny5-v3-latin-regular.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 
+/* dm-mono-regular - latin */
 @font-face {
 	font-display: swap;
-	font-family: 'Tiny5-Regular';
+	font-family: 'DM Mono';
 	font-style: normal;
-	font-weight: 700;
-	src: url(/fonts/Tiny5-Regular.ttf) format('truetype');
+	font-weight: 400;
+	src: url('/fonts/dm-mono-v16-latin-regular.woff2') format('woff2'),
+		/* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+			url('/fonts/dm-mono-v16-latin-regular.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
