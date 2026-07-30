@@ -163,6 +163,13 @@ body {
 	pointer-events: auto;
 }
 
+@media (prefers-reduced-motion: reduce) {
+	.modal-input {
+		transition: opacity 300ms ease;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}
+
 .modal-input h2 {
 	font-size: var(--fs-heading-sm);
 }
@@ -236,7 +243,28 @@ input::placeholder {
 input.error {
 	outline: 3px solid red;
 	color: red;
-	outline-offset: 0px;
+	animation: error 0.3s ease-in-out;
+}
+
+@keyframes error {
+	0% {
+		transform: translateX(0);
+	}
+	25% {
+		transform: translateX(-0.75rem);
+	}
+	50% {
+		transform: translateX(0.75rem);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	input.error {
+		animation: none;
+	}
 }
 
 .btn {
@@ -294,12 +322,6 @@ input.error {
 .right {
 	text-align: right;
 }
-
-/* @media (min-width: 30em) {
-	.paper {
-		height: auto;
-	}
-} */
 
 .hidden {
 	display: none;

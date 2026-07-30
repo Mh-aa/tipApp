@@ -44,6 +44,9 @@ const inputfieldTip = document.getElementById('custom-tip-input');
 const billResult = document.getElementById('bill-result');
 const tipResult = document.getElementById('tip-result');
 const totalResult = document.getElementById('total-result');
+const prefersReducedMotion = window.matchMedia(
+	'(prefers-reduced-motion: reduce)'
+);
 let digits = '0';
 let percent = '0';
 
@@ -88,8 +91,6 @@ function handleBeforeInputEvent(e) {
 	const input = e.target;
 	if (!(input instanceof HTMLInputElement)) return;
 
-	input.classList.remove('error');
-
 	if (e.inputType === 'deleteContentBackward') {
 		e.preventDefault();
 
@@ -115,6 +116,13 @@ function handleBeforeInputEvent(e) {
 
 		if (!assertInputIsNumber(text)) {
 			input.classList.add('error');
+
+			if (prefersReducedMotion.matches) {
+				setTimeout(() => {
+					input.classList.remove('error');
+				}, 300);
+			}
+
 			return;
 		}
 
@@ -174,8 +182,8 @@ function calcTip(tip = 0) {
 	const total = tipCalc + billNum;
 
 	billResult.innerText = getFormattedInput(inputfieldBill);
-	tipResult.innerText = `${tipCalc.toFixed(2)} €`;
-	totalResult.innerText = `${total.toFixed(2)} €`;
+	tipResult.innerText = `${tipCalc.toFixed(2).replace('.', ',')} €`;
+	totalResult.innerText = `${total.toFixed(2).replace('.', ',')} €`;
 }
 
 /* Modal window Functions */
@@ -277,6 +285,9 @@ function init() {
 	[inputfieldBill, inputfieldTip].forEach((el) => {
 		el.addEventListener('beforeinput', handleBeforeInputEvent);
 		el.addEventListener('input', handleInputChange);
+		el.addEventListener('animationend', () => {
+			el.classList.remove('error');
+		});
 	});
 
 	document.addEventListener('selectionchange', handleSelectionChange);
