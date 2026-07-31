@@ -1,10 +1,7 @@
 'use strict';
 //TODO:
 /*
-- Copy/Paste Event handlen
-- Richtige Font downloaden und Fontface vorbereiten
-- CSS sauber machen
-- CSS error so wie PayPal bauen mit wackeln */
+- Accessibility Inputfeld prüfen */
 
 /* TODO
 id-Abfrage
