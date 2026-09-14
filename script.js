@@ -1,37 +1,4 @@
 'use strict';
-//TODO:
-/*
-- Accessibility Inputfeld prüfen */
-
-/* TODO
-id-Abfrage
-
-Das funktioniert, skaliert aber nicht besonders gut.
-
-Statt
-
-if (input.id === 'bill-input') {
-    digits = pastedText;
-} else if (input.id === 'custom-tip-input') {
-    percent = pastedText;
-}
-
-könntest du z. B. ein data-*-Attribut verwenden:
-
-<input data-model="digits">
-<input data-model="percent">
-
-Dann:
-
-switch (input.dataset.model) {
-    case 'digits':
-        digits = pastedText;
-        break;
-    case 'percent':
-        percent = pastedText;
-        break;
-}
-*/
 
 const form = document.querySelector('form');
 const overlay = document.querySelector('.overlay');
@@ -44,118 +11,125 @@ const totalResult = document.getElementById('total-result');
 const prefersReducedMotion = window.matchMedia(
 	'(prefers-reduced-motion: reduce)'
 );
-let digits = '0';
-let percent = '0';
+let billInputDigits = '0';
+let customTipPercent = '0';
 
-/* Ansatz: "Ich verwalte einen Zustand und benutze das Inputfeld nur als Ausgabe." */
-
-/* Helper Functions */
+// Helper Functions
 function assertInputIsNumber(input) {
 	return /^\d+$/.test(input);
 }
 
-function positionCursor(pos, el) {
+function positionCursor(pos, inputField) {
+	// Reposition cursor on the next browser render
 	requestAnimationFrame(() => {
-		el.setSelectionRange(pos, pos);
+		inputField.setSelectionRange(pos, pos);
 	});
 }
 
-function getFormattedInput(el) {
-	if (el.id === 'bill-input') {
-		const paddedDigits = digits.padStart(3, '0');
-		return `${paddedDigits.slice(0, -2)},${paddedDigits.slice(-2)} €`;
-	} else if (el.id === 'custom-tip-input') {
-		return `${percent} %`;
+function getFormattedInput(input) {
+	const inputDataset = input.dataset.model;
+
+	switch (inputDataset) {
+		case 'digits':
+			const paddedDigits = billInputDigits.padStart(3, '0');
+			return `${paddedDigits.slice(0, -2)},${paddedDigits.slice(-2)} €`;
+		case 'percent':
+			return `${customTipPercent} %`;
 	}
 }
 
-function renderInput(el) {
-	let formattedInput = getFormattedInput(el);
+function renderInput(input) {
+	let formattedInput = getFormattedInput(input);
 
-	el.value = formattedInput;
+	input.value = formattedInput;
 
-	/* Dynamische Cursorpositionierung am Leerzeichen: */
+	// Dynamic cursor positioning at a space
 	let posDynamic = formattedInput.indexOf(' ');
-	positionCursor(posDynamic, el);
+	positionCursor(posDynamic, input);
 }
 
-function handleDeleteContentBackward(el) {
-	return el.slice(0, -1) || '0';
+function handleDeleteContentBackward(input) {
+	return input.slice(0, -1) || '0';
 }
 
-/* Inputfelder Functions */
+// Custom input field functionality
 function handleBeforeInputEvent(e) {
 	const input = e.target;
+	const inputType = e.inputType;
+	const inputDataset = input.dataset.model;
+
 	if (!(input instanceof HTMLInputElement)) return;
 
-	if (e.inputType === 'deleteContentBackward') {
-		e.preventDefault();
+	switch (inputType) {
+		case 'deleteContentBackward':
+			e.preventDefault();
 
-		if (input.id === 'bill-input') {
-			digits = handleDeleteContentBackward(digits);
-		} else if (input.id === 'custom-tip-input') {
-			percent = handleDeleteContentBackward(percent);
-		}
-
-		renderInput(input);
-		return;
-	}
-
-	if (e.inputType === 'insertText' || e.inputType === 'insertFromPaste') {
-		e.preventDefault();
-
-		const text =
-			e.inputType === 'insertText'
-				? e.data
-				: e.dataTransfer?.getData('text/plain') ?? e.data;
-
-		if (text == null) return;
-
-		if (!assertInputIsNumber(text)) {
-			input.classList.add('error');
-
-			if (prefersReducedMotion.matches) {
-				setTimeout(() => {
-					input.classList.remove('error');
-				}, 300);
+			if (inputDataset === 'digits') {
+				billInputDigits = handleDeleteContentBackward(billInputDigits);
+			} else if (inputDataset === 'percent') {
+				customTipPercent =
+					handleDeleteContentBackward(customTipPercent);
 			}
 
+			renderInput(input);
 			return;
-		}
+		case 'insertText':
+		case 'insertFromPaste':
+			e.preventDefault();
 
-		if (input.id === 'bill-input') {
-			if (digits.length > 5) return;
-			digits += text;
-			/* Convert to Number to get rid of leading zeros, then back to string */
-			digits = (+digits).toString();
-		} else if (input.id === 'custom-tip-input') {
-			if (percent.length > 2) return;
-			percent += text;
-			percent = (+percent).toString();
-		}
+			// Get plain text from paste/drop data, falling back to e.data:
+			const text =
+				e.inputType === 'insertText'
+					? e.data
+					: e.dataTransfer?.getData('text/plain') ?? e.data;
 
-		renderInput(input);
-		return;
+			if (text == null) return;
+
+			if (!assertInputIsNumber(text)) {
+				// Error animation is removed with animationend event further down
+				input.classList.add('error');
+
+				// Manual removal on error when there is no animation
+				if (prefersReducedMotion.matches) {
+					setTimeout(() => {
+						input.classList.remove('error');
+					}, 300);
+				}
+				return;
+			}
+
+			if (inputDataset === 'digits') {
+				if (billInputDigits.length > 5) return;
+				billInputDigits += text;
+				// Convert to number to get rid of leading zeros, then back to string
+				billInputDigits = (+billInputDigits).toString();
+			} else if (inputDataset === 'percent') {
+				if (customTipPercent.length > 2) return;
+				customTipPercent += text;
+				customTipPercent = (+customTipPercent).toString();
+			}
+
+			renderInput(input);
+			return;
 	}
 }
 
-/* Mobile Inputfeld-Bugs beheben: */
-/* User kann den Cursor nicht mehr innerhalb des Eingabefeldes verschieben: */
+// Fix mobile input field issues:
+// Prevent the user from moving the cursor within the input field
 function handleSelectionChange() {
 	const activeElement = document.activeElement;
 
-	/* Falls Fokus nicht auf Inputelement liegt: */
 	if (!(activeElement instanceof HTMLInputElement)) return;
 
 	let pos = activeElement.value.indexOf(' ');
-	/* Falls kein Leerzeichen vorhanden sein sollte */
+	// Guard clause if there is no space
 	if (pos === -1) return;
 
 	if (activeElement.selectionStart !== pos)
 		positionCursor(pos, activeElement);
 }
 
-/* Abgleichen ob der Wert des Inputfeldes dem Wert des formattierten Input entspricht, wenn nicht, neu rendern: */
+// Check whether the input field value matches the formatted value; if not, re-render
 function handleInputChange(e) {
 	const input = e.currentTarget;
 	let expectedValue = getFormattedInput(input);
@@ -165,25 +139,25 @@ function handleInputChange(e) {
 	}
 }
 
-/* Tiprechner Funktionalität */
+// Tip calculator
 function calcTip(tip = 0) {
-	const paddedDigits = digits.padStart(3, '0');
+	const paddedDigits = billInputDigits.padStart(3, '0');
 
 	const cents = paddedDigits.slice(-2);
 	const euro = paddedDigits.slice(0, -2);
 
-	let billNum = Number(`${euro}.${cents}`);
-	let tipNum = Number(tip);
+	let billNum = +`${euro}.${cents}`;
+	let tipNum = +tip;
 
 	const tipCalc = billNum * (tipNum / 100);
-	const total = tipCalc + billNum;
+	const totalCalc = tipCalc + billNum;
 
 	billResult.innerText = getFormattedInput(inputfieldBill);
 	tipResult.innerText = `${tipCalc.toFixed(2).replace('.', ',')} €`;
-	totalResult.innerText = `${total.toFixed(2).replace('.', ',')} €`;
+	totalResult.innerText = `${totalCalc.toFixed(2).replace('.', ',')} €`;
 }
 
-/* Modal window Functions */
+// Modal window functionality
 function focusTrap(e) {
 	if (e.key !== 'Tab') return;
 
@@ -223,17 +197,17 @@ function setModalState(open) {
 function handleEscapeBtnModal(e) {
 	if (e.key !== 'Escape') return;
 	if (!modal.classList.contains('modal-open')) return;
-	inputfieldBill.focus();
 	setModalState(false);
+	inputfieldBill.focus();
 }
 
-/* Functionalität aller anderen Buttons */
+// Overall button functionality
 function handleFormClick(e) {
 	const clicked = e.target.closest('.btn');
 
 	if (!clicked) return;
 
-	/* Prozentbuttons dynamisch ansprechen über dataset: */
+	// 5%, 7%, 10% button functionality
 	if (clicked.dataset.tip) {
 		calcTip(clicked.dataset.tip);
 		return;
@@ -246,13 +220,11 @@ function handleFormClick(e) {
 			break;
 
 		case 'apply':
-			calcTip(percent);
+			calcTip(customTipPercent);
 			setModalState(false);
 			break;
 
 		case 'cancel':
-			inputfieldTip.value = `0 %`;
-			percent = '0';
 			setModalState(false);
 			break;
 
@@ -261,9 +233,8 @@ function handleFormClick(e) {
 				(el) => (el.innerText = `0,00 €`)
 			);
 			inputfieldTip.value = `0 %`;
-			percent = '0';
-			digits = '0';
-			percent = '0';
+			customTipPercent = '0';
+			billInputDigits = '0';
 			inputfieldBill.focus();
 			break;
 	}
@@ -273,12 +244,12 @@ function init() {
 	if (!form || !overlay || !modal || !inputfieldBill || !inputfieldTip)
 		return;
 
-	/* Cursorposition initialisieren: */
+	// Initialize cursor position
 	inputfieldBill.focus();
 	let pos = inputfieldBill.value.indexOf(' ');
 	positionCursor(pos, inputfieldBill);
 
-	/* Weitere Event Listener initialisieren */
+	// Initialize eventListeners
 	[inputfieldBill, inputfieldTip].forEach((el) => {
 		el.addEventListener('beforeinput', handleBeforeInputEvent);
 		el.addEventListener('input', handleInputChange);
