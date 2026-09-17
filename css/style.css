@@ -3,15 +3,16 @@
 	--clr-main-light: hsl(0 0% 100%);
 	--clr-accent: hsl(73.5 100% 35.7%);
 	--clr-accent-dark: hsl(74 100% 20%);
+	--clr-error: red;
 
 	--ff-body: 'DM Mono', monospace;
 	--ff-heading: 'Tiny5', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
 		'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 
-	--fs-body: clamp(0.9rem, 0.1rem + 4vw, 1.5rem);
+	--fs-body: clamp(0.9rem, calc(0.1rem + 4vw), 1.5rem);
 	--fs-body-sm: clamp(0.875rem, calc(0.71rem + 0.83vw), 1rem);
-	--fs-heading: clamp(2rem, 0.67rem + 6.67vw, 3rem);
-	--fs-heading-sm: clamp(1rem, 0.33rem + 3.33vw, 1.5rem);
+	--fs-heading: clamp(2rem, calc(0.67rem + 6.67vw), 3rem);
+	--fs-heading-sm: clamp(1rem, calc(0.33rem + 3.33vw), 1.5rem);
 	--fw-regular: 400;
 
 	/* Base 0.5 */
@@ -231,8 +232,8 @@ input:focus::placeholder {
 }
 
 input.error {
-	outline: 3px solid red;
-	color: red;
+	outline: 3px solid var(--clr-error);
+	color: var(--clr-error);
 	animation: error 0.3s ease-in-out;
 }
 
